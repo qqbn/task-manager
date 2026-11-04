@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "title": "Przejrzeć plan nauki GH-300",
+    "description": "Przeczytać plik z katalogu schedules i wybrać pierwszy moduł.",
+    "done": 0
+  },
+  {
+    "id": 2,
+    "title": "Dodać testy do crud.py",
+    "description": "Pokryć create_task, update_task i delete_task.",
+    "done": 0
+  },
+  {
+    "id": 3,
+    "title": "Zrobić zakupy",
+    "description": "Chleb, mleko, jajka, kawa.",
+    "done": 1
+  },
+  {
+    "id": 4,
+    "title": "Uzupełnić README",
+    "description": null,
+    "done": 0
+  },
+  {
+    "id": 5,
+    "title": "Zainicjować bazę danych",
+    "description": "Uruchomić init_db() i sprawdzić, czy powstaje tasks.db.",
+    "done": 1
+  },
+  {
+    "id": 6,
+    "title": "Testowy task",
+    "description": "Tstowy task desc"
+  }
+]
