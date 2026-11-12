@@ -1,4 +1,4 @@
-from app.crud import create_task, delete_task, get_all_tasks, get_task, update_task
+from app.functional.crud import create_task, delete_task, get_all_tasks, get_task, update_task
 from app.database import get_connection, init_db
 
 

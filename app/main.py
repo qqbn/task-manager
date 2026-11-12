@@ -1,5 +1,5 @@
 from app.database import init_db
-from app.crud import create_task, get_all_tasks, delete_task, update_task
+from app.functional.crud import create_task, get_all_tasks, delete_task, update_task
 
 def main():
     init_db()

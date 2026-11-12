@@ -11,6 +11,7 @@ The application allows users to:
 - add a new task,
 - view all existing tasks,
 - delete a task by ID,
+- update a task,
 - store data in a local SQLite database,
 - run the app in a virtual environment.
 
@@ -20,11 +21,21 @@ The application allows users to:
 task-manager/
 ├── app/
 │   ├── __init__.py
-│   ├── crud.py
-│   ├── database.py
-│   └── main.py
+│   ├── database.py          # shared SQLite connection + init
+│   ├── main.py              # CLI entry point (function-based)
+│   ├── class_main.py        # CLI entry point (class-based)
+│   ├── functional/
+│   │   ├── crud.py
+│   │   └── json_io.py
+│   └── oop/
+│       ├── task.py
+│       └── task_repository.py
 ├── tests/
-│   └── test_crud.py
+│   ├── functional/
+│   │   ├── test_crud.py
+│   │   └── test_json_io.py
+│   └── oop/
+│       └── test_task_repository.py
 ├── requirements.txt
 ├── README.md
 ├── tasks.db
@@ -75,6 +86,17 @@ python -m app.main
 
 This command ensures the package is recognized correctly and the application starts as a module.
 
+To run the class-based version, use:
+
+```bash
+python -m app.class_main
+```
+
+In this version, `Task` represents a task as a Python object, `TaskRepository`
+handles SQLite operations, and `class_main.py` provides the CLI. The original
+function-based version remains available in `crud.py` and `main.py` for
+comparison.
+
 ## Example Menu
 
 When the app starts, the user sees the following menu:
@@ -83,7 +105,8 @@ When the app starts, the user sees the following menu:
 1. Add task
 2. List tasks
 3. Delete task
-4. Exit
+4. Update task
+5. Exit
 ```
 
 The user can then:
@@ -91,6 +114,7 @@ The user can then:
 - add a task,
 - list all tasks,
 - delete a task by ID,
+- update a task,
 - exit the application.
 
 ## Database

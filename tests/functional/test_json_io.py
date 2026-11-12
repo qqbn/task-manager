@@ -1,7 +1,7 @@
 import pytest
 
-from app import json_io
-from app.json_io import (
+from app.functional import json_io
+from app.functional.json_io import (
     ask_done,
     delete_task,
     get_all_tasks,
