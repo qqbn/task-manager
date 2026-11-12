@@ -13,8 +13,8 @@ from app.functional.json_io import (
 
 @pytest.fixture(autouse=True)
 def isolated_tasks_file(tmp_path, monkeypatch):
-    # json_io czyta "tasks.json" z bieżącego katalogu, więc testy
-    # pracują w katalogu tymczasowym i nie ruszają prawdziwego pliku.
+    # json_io reads "tasks.json" from the current directory, so the tests
+    # run in a temporary directory and never touch the real file.
     monkeypatch.chdir(tmp_path)
 
 

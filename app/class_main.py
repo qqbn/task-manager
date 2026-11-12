@@ -3,9 +3,14 @@ from app.oop.task import Task
 from app.oop.task_repository import TaskRepository
 
 
-def main():
-    init_db()
-    tasks = TaskRepository()
+# main() accepts a repository as an argument (it creates a default one).
+# Why: the program is not hard-wired to a single database - a test can pass
+# a repository that points to a temporary file. This is called dependency
+# injection: an object receives what it needs from the outside.
+def main(tasks=None):
+    tasks = tasks or TaskRepository()
+    # Create the table in the same DB the repository uses.
+    init_db(tasks.db_path)
     print("Task Manager CLI (class-based)")
 
     while True:

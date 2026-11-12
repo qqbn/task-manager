@@ -6,10 +6,12 @@ from app.oop.task_repository import TaskRepository
 
 
 @pytest.fixture
-def repository(tmp_path, monkeypatch):
-    monkeypatch.setattr(database, "DB_PATH", str(tmp_path / "tasks.db"))
-    database.init_db()
-    return TaskRepository()
+def repository(tmp_path):
+    # No monkeypatch needed: the repository gets a temporary file directly
+    # through its constructor. The real tasks.db is never touched here.
+    db_path = str(tmp_path / "tasks.db")
+    database.init_db(db_path)
+    return TaskRepository(db_path)
 
 
 def test_create_and_list_task(repository):
@@ -60,6 +62,6 @@ def test_class_cli_adds_a_task(repository, monkeypatch):
 
     from app.class_main import main
 
-    main()
+    main(repository)  # pass the test repository instead of the default one
 
     assert repository.get_all_tasks() == [Task("CLI task", "Opis", id=1)]
