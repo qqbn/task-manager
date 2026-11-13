@@ -27,11 +27,5 @@
     "id": 6,
     "title": "Testowy task po zmianie",
     "description": "Testowy opis taska po zmianie"
-  },
-  {
-    "id": 7,
-    "title": "Commit latest changes",
-    "description": "Remember to commit latest changes",
-    "done": 1
   }
 ]

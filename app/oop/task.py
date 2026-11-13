@@ -30,3 +30,7 @@ class Task:
     description: Optional[str] = None
     done: bool = False
     id: Optional[int] = None
+
+    def __post_init__(self):
+        if not self.title.strip():
+            raise ValueError("Task title cannot be empty")
