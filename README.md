@@ -97,6 +97,20 @@ handles SQLite operations, and `class_main.py` provides the CLI. The original
 function-based version remains available in `crud.py` and `main.py` for
 comparison.
 
+To manage tasks with command-line arguments instead of the interactive menu,
+use the argparse interface:
+
+```bash
+python -m app.cli add "Buy groceries" --description "Milk and bread"
+python -m app.cli list
+python -m app.cli update 1 --title "Buy groceries" --done 1
+python -m app.cli delete 1
+```
+
+The argparse interface uses the same `TaskRepository` and `tasks.db` as the
+class-based version. For update commands, omit any field that should remain
+unchanged. The `--done` option accepts `0` (not done) or `1` (done).
+
 ## Example Menu
 
 When the app starts, the user sees the following menu:
