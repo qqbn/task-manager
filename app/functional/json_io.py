@@ -1,4 +1,7 @@
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -22,7 +25,7 @@ def main():
             }
             tasks.append(new_task)
             save_all_tasks(tasks)
-            print("Adding a new task.")
+            logger.info("Task added.")
         elif choice == "2":
             tasks = get_all_tasks()
             for task in tasks:
@@ -30,19 +33,19 @@ def main():
         elif choice == "3":
             id = input("Id of task: ")
             if delete_task(int(id)):
-                print("Task deleted.")
+                logger.info("Task deleted.")
             else:
-                print("Task not found.")
+                logger.warning("Task not found.")
         elif choice == "4":
             try:
                 task_id = int(input("ID to update: "))
             except ValueError:
-                print("ID must be a number.")
+                logger.warning("ID must be a number.")
                 continue
 
             task = get_task(task_id)
             if task is None:
-                print("Task not found.")
+                logger.warning("Task not found.")
                 continue
 
             new_title = input(f"Title [{task['title']}]: ")
@@ -51,11 +54,11 @@ def main():
             new_done = ask_done(f"Done (0/1) [{task.get('done')}]: ", default=None)
 
             update_task(task_id, new_title, new_description, new_done)
-            print("Task updated.")
+            logger.info("Task updated.")
         elif choice == "5":
             break
         else:
-            print("Invalid option")
+            logger.warning("Invalid option")
 
 
 def get_all_tasks():
@@ -91,7 +94,7 @@ def ask_done(prompt, default):
             return default
         if value in ("0", "1"):
             return int(value)
-        print("Enter 0 or 1.")
+        logger.warning("Enter 0 or 1.")
 
 
 def update_task(task_id, title="", description="", done=None):
@@ -113,4 +116,5 @@ def update_task(task_id, title="", description="", done=None):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     main()

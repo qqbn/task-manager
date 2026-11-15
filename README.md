@@ -42,6 +42,12 @@ task-manager/
 └── .venv/
 ```
 
+## Output: `print` vs `logging`
+
+- `print` is used for what the user asked to see: menus, prompts and the task list.
+- `logging` (stderr) is used for status and problems: `Task added.`, `Task not found.`,
+  `Invalid option`. Handlers are configured only in the `__main__` block of each entry point.
+
 ## Technologies
 
 - Python 3

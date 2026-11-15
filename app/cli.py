@@ -1,8 +1,11 @@
 import argparse
+import logging
 
 from app.database import init_db
 from app.oop.task import Task
 from app.oop.task_repository import TaskRepository
+
+logger = logging.getLogger(__name__)
 
 
 def _non_empty(value):
@@ -41,11 +44,11 @@ def main(argv=None, tasks=None):
 
     if args.command == "add":
         task = tasks.create_task(Task(args.title, args.description))
-        print(f"Task added. ID: {task.id}")
+        logger.info("Task added. ID: %s", task.id)
     elif args.command == "list":
         all_tasks = tasks.get_all_tasks()
         if not all_tasks:
-            print("No tasks found.")
+            logger.info("No tasks found.")
         for task in all_tasks:
             print(task)
     elif args.command == "update":
@@ -56,15 +59,16 @@ def main(argv=None, tasks=None):
             description=args.description,
             done=done,
         ):
-            print("Task updated.")
+            logger.info("Task updated.")
         else:
-            print("Task not found.")
+            logger.warning("Task not found.")
     elif args.command == "delete":
         if tasks.delete_task(args.task_id):
-            print("Task deleted.")
+            logger.info("Task deleted.")
         else:
-            print("Task not found.")
+            logger.warning("Task not found.")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     main()

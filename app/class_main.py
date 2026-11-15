@@ -1,6 +1,10 @@
+import logging
+
 from app.database import init_db
 from app.oop.task import Task
 from app.oop.task_repository import TaskRepository
+
+logger = logging.getLogger(__name__)
 
 
 # main() accepts a repository as an argument (it creates a default one).
@@ -21,14 +25,14 @@ def main(tasks=None):
             title = input("Title: ")
             description = input("Description (optional): ")
             task = tasks.create_task(Task(title, description or None))
-            print("Task added. ID:", task.id)
+            logger.info("Task added. ID: %s", task.id)
         elif choice == "2":
             for task in tasks.get_all_tasks():
                 print(task)
         elif choice == "3":
             task_id = int(input("Task ID: "))
             tasks.delete_task(task_id)
-            print("Task deleted.")
+            logger.info("Task deleted.")
         elif choice == "4":
             task_id = int(input("Task ID: "))
             title = input("New Title (leave blank to keep current): ")
@@ -41,12 +45,13 @@ def main(tasks=None):
                 description or None,
                 done,
             )
-            print("Task updated.")
+            logger.info("Task updated.")
         elif choice == "5":
             break
         else:
-            print("Invalid option")
+            logger.warning("Invalid option")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     main()

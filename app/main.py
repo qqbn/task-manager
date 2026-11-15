@@ -1,5 +1,9 @@
+import logging
+
 from app.database import init_db
 from app.functional.crud import create_task, delete_task, get_all_tasks, update_task
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -13,7 +17,7 @@ def main():
             title = input("Title: ")
             description = input("Description (optional): ")
             create_task(title, description or None)
-            print("Task added.")
+            logger.info("Task added.")
         elif choice == "2":
             tasks = get_all_tasks()
             for task in tasks:
@@ -21,7 +25,7 @@ def main():
         elif choice == "3":
             task_id = int(input("Task ID: "))
             delete_task(task_id)
-            print("Task deleted.")
+            logger.info("Task deleted.")
         elif choice == "4":
             task_id = int(input("Task ID: "))
             title = input("New Title (leave blank to keep current): ")
@@ -29,12 +33,13 @@ def main():
             done_raw = input("Mark as done? 0/1 (leave blank to keep current): ")
             done = int(done_raw) if done_raw in ("0", "1") else None
             update_task(task_id, title or None, description or None, done)
-            print("Task updated.")
+            logger.info("Task updated.")
         elif choice == "5":
             break
         else:
-            print("Invalid option")
+            logger.warning("Invalid option")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     main()

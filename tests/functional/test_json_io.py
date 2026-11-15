@@ -176,11 +176,11 @@ def test_menu_update_task(monkeypatch):
     assert task["done"] == 1
 
 
-def test_menu_update_missing_task_prints_message(monkeypatch, capsys):
+def test_menu_update_missing_task_logs_warning(monkeypatch, caplog):
     save_all_tasks([{"id": 1, "title": "Zadanie", "description": None, "done": 0}])
     answers = iter(["4", "999", "5"])
     monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
 
     json_io.main()
 
-    assert "Task not found." in capsys.readouterr().out
+    assert "Task not found." in caplog.text
