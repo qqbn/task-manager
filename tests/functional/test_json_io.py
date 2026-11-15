@@ -184,3 +184,33 @@ def test_menu_update_missing_task_logs_warning(monkeypatch, caplog):
     json_io.main()
 
     assert "Task not found." in caplog.text
+
+
+def test_menu_reports_empty_list_and_rejects_invalid_delete_id_and_missing_task(
+    monkeypatch, caplog
+):
+    save_all_tasks([])
+    answers = iter(["2", "3", "bad", "3", "404", "5"])
+    monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
+
+    caplog.set_level("INFO", logger="app.functional.json_io")
+    json_io.main()
+
+    assert "No tasks found." in caplog.text
+    assert "ID must be a number." in caplog.text
+    assert "Task not found." in caplog.text
+    assert "Task deleted." not in caplog.text
+
+
+def test_menu_rejects_empty_title_and_retries_invalid_done(monkeypatch, caplog):
+    save_all_tasks([])
+    answers = iter(["1", "   ", "1", "Task", "", "bad", "1", "5"])
+    monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
+
+    json_io.main()
+
+    assert get_all_tasks() == [
+        {"id": 1, "title": "Task", "description": None, "done": 1}
+    ]
+    assert "Task title cannot be empty." in caplog.text
+    assert "Enter 0 or 1." in caplog.text

@@ -23,29 +23,53 @@ def main(tasks=None):
 
         if choice == "1":
             title = input("Title: ")
+            if not title.strip():
+                logger.warning("Task title cannot be empty.")
+                continue
             description = input("Description (optional): ")
             task = tasks.create_task(Task(title, description or None))
             logger.info("Task added. ID: %s", task.id)
         elif choice == "2":
-            for task in tasks.get_all_tasks():
-                print(task)
+            all_tasks = tasks.get_all_tasks()
+            if not all_tasks:
+                logger.info("No tasks found.")
+            else:
+                for task in all_tasks:
+                    print(task)
         elif choice == "3":
-            task_id = int(input("Task ID: "))
-            tasks.delete_task(task_id)
-            logger.info("Task deleted.")
+            try:
+                task_id = int(input("Task ID: "))
+            except ValueError:
+                logger.warning("ID must be a number.")
+                continue
+            if tasks.delete_task(task_id):
+                logger.info("Task deleted.")
+            else:
+                logger.warning("Task not found.")
         elif choice == "4":
-            task_id = int(input("Task ID: "))
+            try:
+                task_id = int(input("Task ID: "))
+            except ValueError:
+                logger.warning("ID must be a number.")
+                continue
+            if tasks.get_task(task_id) is None:
+                logger.warning("Task not found.")
+                continue
             title = input("New Title (leave blank to keep current): ")
             description = input("New Description (leave blank to keep current): ")
-            done_raw = input("Mark as done? 0/1 (leave blank to keep current): ")
-            done = done_raw == "1" if done_raw in ("0", "1") else None
-            tasks.update_task(
-                task_id,
-                title or None,
-                description or None,
-                done,
-            )
-            logger.info("Task updated.")
+            while True:
+                done_raw = input("Mark as done? 0/1 (leave blank to keep current): ")
+                if done_raw == "":
+                    done = None
+                    break
+                if done_raw in ("0", "1"):
+                    done = done_raw == "1"
+                    break
+                logger.warning("Enter 0 or 1.")
+            if tasks.update_task(task_id, title or None, description or None, done):
+                logger.info("Task updated.")
+            else:
+                logger.warning("Task not found.")
         elif choice == "5":
             break
         else:

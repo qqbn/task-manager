@@ -15,6 +15,9 @@ def main():
             tasks = get_all_tasks()
             new_id = max((t["id"] for t in tasks), default=0) + 1
             title = input("Title: ")
+            if not title.strip():
+                logger.warning("Task title cannot be empty.")
+                continue
             description = input("Description (optional): ")
             done = ask_done("Done (0/1) [0]: ", default=0)
             new_task = {
@@ -28,11 +31,18 @@ def main():
             logger.info("Task added.")
         elif choice == "2":
             tasks = get_all_tasks()
-            for task in tasks:
-                print(task)
+            if not tasks:
+                logger.info("No tasks found.")
+            else:
+                for task in tasks:
+                    print(task)
         elif choice == "3":
-            id = input("Id of task: ")
-            if delete_task(int(id)):
+            try:
+                task_id = int(input("Id of task: "))
+            except ValueError:
+                logger.warning("ID must be a number.")
+                continue
+            if delete_task(task_id):
                 logger.info("Task deleted.")
             else:
                 logger.warning("Task not found.")
@@ -53,8 +63,10 @@ def main():
 
             new_done = ask_done(f"Done (0/1) [{task.get('done')}]: ", default=None)
 
-            update_task(task_id, new_title, new_description, new_done)
-            logger.info("Task updated.")
+            if update_task(task_id, new_title, new_description, new_done):
+                logger.info("Task updated.")
+            else:
+                logger.warning("Task not found.")
         elif choice == "5":
             break
         else:

@@ -47,6 +47,8 @@ task-manager/
 - `print` is used for what the user asked to see: menus, prompts and the task list.
 - `logging` (stderr) is used for status and problems: `Task added.`, `Task not found.`,
   `Invalid option`. Handlers are configured only in the `__main__` block of each entry point.
+- The interactive menus warn about invalid IDs, empty titles, invalid completion
+  values, and missing tasks; an empty task list is reported as an informational message.
 
 ## Technologies
 
