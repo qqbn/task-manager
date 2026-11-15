@@ -66,8 +66,10 @@ def test_class_cli_adds_a_task(repository, monkeypatch):
 
     assert repository.get_all_tasks() == [Task("CLI task", "Opis", id=1)]
 
+
 def test_get_all_tasks_returns_empty_list_for_empty_db(repository):
     assert repository.get_all_tasks() == []
+
 
 def test_get_task_returns_created_task(repository):
     task = repository.create_task(Task("New task", "Desc"))
@@ -75,6 +77,7 @@ def test_get_task_returns_created_task(repository):
     selected_task = repository.get_task(task_id)
 
     assert selected_task == task
+
 
 def test_get_all_tasks_returns_tasks_ordered_by_id(repository):
     t1 = repository.create_task(Task("New task 1", "Desc 1"))
@@ -93,8 +96,10 @@ def test_update_task_can_set_done_back_to_false(repository):
     assert repository.update_task(task.id, done=False) is True
     assert updated.done is False
 
+
 def test_update_task_returns_false_for_missing_id(repository):
     assert repository.update_task(999, title="Nowy") is False
+
 
 def test_data_persists_between_repository_instances(repository, tmp_path):
     # Create a task with the first repository instance
@@ -109,9 +114,11 @@ def test_data_persists_between_repository_instances(repository, tmp_path):
 
     assert retrieved_task == task
 
+
 def test_create_task_with_empty_title_raises(repository):
     with pytest.raises(ValueError):
         repository.create_task(Task("", "Description"))
+
 
 def test_update_task_with_only_title_keeps_other_fields(repository):
     task = repository.create_task(Task("New task", "Desc", done=True))

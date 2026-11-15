@@ -31,10 +31,17 @@ def test_save_and_list_tasks():
 
 
 def test_get_task_returns_task_by_id():
-    save_all_tasks([
-        {"id": 1, "title": "Pierwszy", "description": "Opis 1", "done": 0},
-        {"id": 2, "title": "Do pobrania", "description": "Szczegóły zadania", "done": 1},
-    ])
+    save_all_tasks(
+        [
+            {"id": 1, "title": "Pierwszy", "description": "Opis 1", "done": 0},
+            {
+                "id": 2,
+                "title": "Do pobrania",
+                "description": "Szczegóły zadania",
+                "done": 1,
+            },
+        ]
+    )
 
     task = get_task(2)
 
@@ -52,7 +59,9 @@ def test_get_task_returns_none_for_missing_id():
 
 
 def test_update_task_changes_selected_fields():
-    save_all_tasks([{"id": 1, "title": "Stary tytuł", "description": "Stary opis", "done": 0}])
+    save_all_tasks(
+        [{"id": 1, "title": "Stary tytuł", "description": "Stary opis", "done": 0}]
+    )
 
     updated = update_task(1, title="Nowy tytuł", description="Nowy opis", done=1)
 
@@ -90,10 +99,12 @@ def test_update_task_returns_false_for_missing_id():
 
 
 def test_delete_task():
-    save_all_tasks([
-        {"id": 1, "title": "Zostaje", "description": None, "done": 0},
-        {"id": 2, "title": "Do usunięcia", "description": "Opis", "done": 0},
-    ])
+    save_all_tasks(
+        [
+            {"id": 1, "title": "Zostaje", "description": None, "done": 0},
+            {"id": 2, "title": "Do usunięcia", "description": "Opis", "done": 0},
+        ]
+    )
 
     deleted = delete_task(2)
 
@@ -138,10 +149,12 @@ def test_menu_add_task_with_done(monkeypatch):
 
 
 def test_menu_add_task_does_not_duplicate_id_after_delete(monkeypatch):
-    save_all_tasks([
-        {"id": 1, "title": "Pierwszy", "description": None, "done": 0},
-        {"id": 3, "title": "Trzeci", "description": None, "done": 0},
-    ])
+    save_all_tasks(
+        [
+            {"id": 1, "title": "Pierwszy", "description": None, "done": 0},
+            {"id": 3, "title": "Trzeci", "description": None, "done": 0},
+        ]
+    )
     answers = iter(["1", "Nowy", "", "", "5"])
     monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
 

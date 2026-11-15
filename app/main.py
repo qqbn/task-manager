@@ -1,5 +1,6 @@
 from app.database import init_db
-from app.functional.crud import create_task, get_all_tasks, delete_task, update_task
+from app.functional.crud import create_task, delete_task, get_all_tasks, update_task
+
 
 def main():
     init_db()
@@ -33,6 +34,7 @@ def main():
             break
         else:
             print("Invalid option")
+
 
 if __name__ == "__main__":
     main()

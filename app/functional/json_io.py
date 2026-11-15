@@ -1,5 +1,6 @@
 import json
 
+
 def main():
     print("JSON Func")
 
@@ -17,7 +18,7 @@ def main():
                 "id": new_id,
                 "title": title,
                 "description": description or None,
-                "done": done
+                "done": done,
             }
             tasks.append(new_task)
             save_all_tasks(tasks)
@@ -56,13 +57,16 @@ def main():
         else:
             print("Invalid option")
 
+
 def get_all_tasks():
     with open("tasks.json", "r") as file:
         return json.load(file)
 
+
 def save_all_tasks(tasks):
     with open("tasks.json", "w") as file:
         json.dump(tasks, file, indent=2, ensure_ascii=False)
+
 
 def delete_task(task_id):
     tasks = get_all_tasks()
@@ -74,9 +78,11 @@ def delete_task(task_id):
     save_all_tasks(new_tasks)
     return True
 
+
 def get_task(task_id):
     tasks = get_all_tasks()
     return next((t for t in tasks if t["id"] == task_id), None)
+
 
 def ask_done(prompt, default):
     while True:
@@ -86,6 +92,7 @@ def ask_done(prompt, default):
         if value in ("0", "1"):
             return int(value)
         print("Enter 0 or 1.")
+
 
 def update_task(task_id, title="", description="", done=None):
     tasks = get_all_tasks()
@@ -103,6 +110,7 @@ def update_task(task_id, title="", description="", done=None):
 
     save_all_tasks(tasks)
     return True
+
 
 if __name__ == "__main__":
     main()

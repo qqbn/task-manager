@@ -78,9 +78,7 @@ class TaskRepository:
 
     def delete_task(self, task_id: int) -> bool:
         with closing(get_connection(self.db_path)) as connection:
-            cursor = connection.execute(
-                "DELETE FROM tasks WHERE id = ?", (task_id,)
-            )
+            cursor = connection.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
             connection.commit()
             return cursor.rowcount > 0
 
