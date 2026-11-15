@@ -1,0 +1,11 @@
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+extend-exclude = [".venv", "schedules"]
+
+[tool.ruff.lint]
+# E/W: pycodestyle, F: pyflakes, I: import order, B: bugbear
+select = ["E", "W", "F", "I", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
