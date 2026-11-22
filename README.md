@@ -14,6 +14,7 @@ The application allows users to:
 - update a task,
 - assign a priority (`low`, `normal`, or `high`),
 - choose whether a task is already done when adding it,
+- limit task titles to 200 characters and descriptions to 300 characters,
 - mark a task as done,
 - show task statistics,
 - filter tasks by completion status,
@@ -156,8 +157,8 @@ The project uses SQLite and stores data in a file named `tasks.db`.
 The `tasks` table contains:
 
 - `id` — record identifier,
-- `title` — task title,
-- `description` — optional task description,
+- `title` — task title, maximum 200 characters,
+- `description` — optional task description, maximum 300 characters,
 - `done` — task completion status (`0` or `1`).
 - `priority` — `low`, `normal`, or `high`; defaults to `normal`.
 

@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from app.database import DB_PATH, get_connection
 from app.oop.task import Task
+from app.validation import validate_description, validate_title
 
 
 class TaskRepository:
@@ -84,6 +85,9 @@ class TaskRepository:
         done: Optional[bool] = None,
         priority: Optional[str] = None,
     ) -> bool:
+        if title is not None:
+            validate_title(title)
+        validate_description(description)
         if priority is not None and priority not in ("low", "normal", "high"):
             raise ValueError("Priority must be low, normal or high")
         with closing(get_connection(self.db_path)) as connection:

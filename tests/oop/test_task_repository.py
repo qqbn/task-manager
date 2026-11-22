@@ -152,3 +152,19 @@ def test_priority_done_filter_and_stats(repository):
 def test_invalid_priority_is_rejected(repository):
     with pytest.raises(ValueError):
         repository.create_task(Task("Task", priority="urgent"))
+
+
+def test_task_field_length_limits(repository):
+    task = repository.create_task(Task("A" * 200, description="B" * 300))
+
+    assert task.title == "A" * 200
+    assert task.description == "B" * 300
+
+    with pytest.raises(ValueError, match="200 characters"):
+        repository.create_task(Task("A" * 201))
+    with pytest.raises(ValueError, match="300 characters"):
+        repository.create_task(Task("Valid", description="B" * 301))
+    with pytest.raises(ValueError, match="200 characters"):
+        repository.update_task(task.id, title="A" * 201)
+    with pytest.raises(ValueError, match="300 characters"):
+        repository.update_task(task.id, description="B" * 301)

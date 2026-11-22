@@ -71,3 +71,17 @@ def test_menu_adds_completed_task(tmp_path, monkeypatch):
     assert len(tasks) == 1
     assert tasks[0]["title"] == "Completed task"
     assert tasks[0]["done"] == 1
+
+
+def test_menu_rejects_overlong_fields(tmp_path, monkeypatch, caplog):
+    monkeypatch.chdir(tmp_path)
+    answers = iter(["1", "A" * 201, "7"])
+    monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
+
+    from app.main import main
+
+    caplog.set_level("INFO", logger="app.main")
+    main()
+
+    assert get_all_tasks() == []
+    assert "Task title cannot be longer than 200 characters" in caplog.text
