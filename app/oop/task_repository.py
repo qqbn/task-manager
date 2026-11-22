@@ -27,8 +27,11 @@ class TaskRepository:
     def create_task(self, task: Task) -> Task:
         with closing(get_connection(self.db_path)) as connection:
             cursor = connection.execute(
-                "INSERT INTO tasks (title, description, done) VALUES (?, ?, ?)",
-                (task.title, task.description, task.done),
+                """
+                INSERT INTO tasks (title, description, done, priority)
+                VALUES (?, ?, ?, ?)
+                """,
+                (task.title, task.description, task.done, task.priority),
             )
             connection.commit()
             task_id = cursor.lastrowid
@@ -41,12 +44,30 @@ class TaskRepository:
             title=task.title,
             description=task.description,
             done=task.done,
+            priority=task.priority,
         )
 
     def get_all_tasks(self) -> List[Task]:
         with closing(get_connection(self.db_path)) as connection:
             rows = connection.execute("SELECT * FROM tasks ORDER BY id").fetchall()
         return [self._task_from_row(row) for row in rows]
+
+    def get_tasks_by_done(self, done: bool) -> List[Task]:
+        with closing(get_connection(self.db_path)) as connection:
+            rows = connection.execute(
+                "SELECT * FROM tasks WHERE done = ? ORDER BY id",
+                (int(done),),
+            ).fetchall()
+        return [self._task_from_row(row) for row in rows]
+
+    def get_stats(self) -> dict:
+        tasks = self.get_all_tasks()
+        completed = sum(1 for task in tasks if task.done)
+        return {
+            "total": len(tasks),
+            "completed": completed,
+            "pending": len(tasks) - completed,
+        }
 
     def get_task(self, task_id: int) -> Optional[Task]:
         with closing(get_connection(self.db_path)) as connection:
@@ -61,17 +82,21 @@ class TaskRepository:
         title: Optional[str] = None,
         description: Optional[str] = None,
         done: Optional[bool] = None,
+        priority: Optional[str] = None,
     ) -> bool:
+        if priority is not None and priority not in ("low", "normal", "high"):
+            raise ValueError("Priority must be low, normal or high")
         with closing(get_connection(self.db_path)) as connection:
             cursor = connection.execute(
                 """
                 UPDATE tasks
                 SET title = COALESCE(?, title),
                     description = COALESCE(?, description),
-                    done = COALESCE(?, done)
+                    done = COALESCE(?, done),
+                    priority = COALESCE(?, priority)
                 WHERE id = ?
                 """,
-                (title, description, done, task_id),
+                (title, description, done, priority, task_id),
             )
             connection.commit()
             return cursor.rowcount > 0
@@ -94,4 +119,5 @@ class TaskRepository:
             title=row["title"],
             description=row["description"],
             done=bool(row["done"]),
+            priority=row["priority"] if row["priority"] else "normal",
         )

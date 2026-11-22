@@ -12,6 +12,11 @@ The application allows users to:
 - view all existing tasks,
 - delete a task by ID,
 - update a task,
+- assign a priority (`low`, `normal`, or `high`),
+- choose whether a task is already done when adding it,
+- mark a task as done,
+- show task statistics,
+- filter tasks by completion status,
 - store data in a local SQLite database,
 - run the app in a virtual environment.
 
@@ -111,13 +116,18 @@ use the argparse interface:
 ```bash
 python -m app.cli add "Buy groceries" --description "Milk and bread"
 python -m app.cli list
-python -m app.cli update 1 --title "Buy groceries" --done 1
+python -m app.cli list --done 1
+python -m app.cli add "Call dentist" --priority high --done 1
+python -m app.cli done 1
+python -m app.cli stats
+python -m app.cli update 1 --title "Buy groceries" --done 1 --priority normal
 python -m app.cli delete 1
 ```
 
 The argparse interface uses the same `TaskRepository` and `tasks.db` as the
-class-based version. For update commands, omit any field that should remain
-unchanged. The `--done` option accepts `0` (not done) or `1` (done).
+class-based version. For `add`, `--done` accepts `0` (not done) or `1` (done)
+and defaults to `0`. For update commands, omit any field that should remain
+unchanged; there, `--done` also accepts `0` or `1`.
 
 ## Example Menu
 
@@ -149,6 +159,7 @@ The `tasks` table contains:
 - `title` — task title,
 - `description` — optional task description,
 - `done` — task completion status (`0` or `1`).
+- `priority` — `low`, `normal`, or `high`; defaults to `normal`.
 
 ## Testing
 

@@ -26,6 +26,14 @@ def test_cli_adds_and_lists_task(repository, caplog, capsys):
     assert "CLI task" in capsys.readouterr().out
 
 
+def test_cli_adds_task_with_done_status(repository):
+    from app.cli import main
+
+    main(["add", "Completed task", "--done", "1"], repository)
+
+    assert repository.get_all_tasks() == [Task("Completed task", done=True, id=1)]
+
+
 def test_cli_updates_and_deletes_task(repository, caplog):
     from app.cli import main
 
@@ -68,3 +76,22 @@ def test_cli_rejects_empty_task_title(repository):
 
     with pytest.raises(SystemExit):
         main(["add", "   "], repository)
+
+
+def test_cli_priority_done_filter_and_stats(repository, caplog, capsys):
+    from app.cli import main
+
+    caplog.set_level("INFO", logger="app.cli")
+    main(["add", "Low", "--priority", "low"], repository)
+    main(["add", "High", "--priority", "high"], repository)
+    main(["done", "1"], repository)
+    main(["list", "--done", "1"], repository)
+    main(["stats"], repository)
+
+    output = capsys.readouterr().out
+    assert "Low" in output
+    assert "High" not in output
+    assert "Total: 2" in output
+    assert "Completed: 1" in output
+    assert "Pending: 1" in output
+    assert "Task marked as done." in caplog.text
