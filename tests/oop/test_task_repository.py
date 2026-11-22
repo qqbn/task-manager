@@ -57,14 +57,16 @@ def test_delete_task(repository):
 
 
 def test_class_cli_adds_a_task(repository, monkeypatch):
-    answers = iter(["1", "CLI task", "Opis", "5"])
+    answers = iter(["1", "CLI task", "Opis", "1", "high", "7"])
     monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
 
     from app.class_main import main
 
     main(repository)  # pass the test repository instead of the default one
 
-    assert repository.get_all_tasks() == [Task("CLI task", "Opis", id=1)]
+    assert repository.get_all_tasks() == [
+        Task("CLI task", "Opis", done=True, id=1, priority="high")
+    ]
 
 
 def test_get_all_tasks_returns_empty_list_for_empty_db(repository):
@@ -130,3 +132,23 @@ def test_update_task_with_only_title_keeps_other_fields(repository):
     assert updated_task.title == "Updated task"
     assert updated_task.description == task.description
     assert updated_task.done == task.done
+
+
+def test_priority_done_filter_and_stats(repository):
+    pending = repository.create_task(Task("Pending", priority="low"))
+    completed = repository.create_task(Task("Completed", priority="high"))
+    repository.update_task(completed.id, done=True)
+    completed = repository.get_task(completed.id)
+
+    assert repository.get_tasks_by_done(False) == [pending]
+    assert repository.get_tasks_by_done(True) == [completed]
+    assert repository.get_stats() == {
+        "total": 2,
+        "completed": 1,
+        "pending": 1,
+    }
+
+
+def test_invalid_priority_is_rejected(repository):
+    with pytest.raises(ValueError):
+        repository.create_task(Task("Task", priority="urgent"))

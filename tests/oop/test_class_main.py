@@ -15,7 +15,7 @@ def repository(tmp_path):
 def test_class_menu_reports_empty_list_and_rejects_empty_title(
     repository, monkeypatch, caplog
 ):
-    answers = iter(["2", "1", "   ", "5"])
+    answers = iter(["2", "1", "   ", "", "7"])
     monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
 
     from app.class_main import main
@@ -46,9 +46,10 @@ def test_class_menu_reports_invalid_ids_and_retries_invalid_done(
             str(task.id),
             "",
             "",
+            "",
             "bad",
             "0",
-            "5",
+            "7",
         ]
     )
     monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
@@ -62,3 +63,14 @@ def test_class_menu_reports_invalid_ids_and_retries_invalid_done(
     assert caplog.text.count("Task not found.") == 2
     assert "Enter 0 or 1." in caplog.text
     assert repository.get_task(task.id) == Task("Existing task", done=False, id=task.id)
+
+
+def test_class_menu_can_add_completed_task(repository, monkeypatch):
+    answers = iter(["1", "Completed task", "", "1", "normal", "7"])
+    monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
+
+    from app.class_main import main
+
+    main(repository)
+
+    assert repository.get_all_tasks() == [Task("Completed task", done=True, id=1)]

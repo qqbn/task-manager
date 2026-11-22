@@ -1,10 +1,31 @@
 import logging
+from typing import Optional
 
 from app.database import init_db
 from app.oop.task import Task
 from app.oop.task_repository import TaskRepository
 
 logger = logging.getLogger(__name__)
+
+
+def _ask_done(prompt: str, default: Optional[int] = None) -> Optional[int]:
+    while True:
+        value = input(prompt)
+        if value == "":
+            return default
+        if value in ("0", "1"):
+            return int(value)
+        logger.warning("Enter 0 or 1.")
+
+
+def _ask_priority(prompt, default=None):
+    while True:
+        value = input(prompt).strip().lower()
+        if value == "":
+            return default
+        if value in ("low", "normal", "high"):
+            return value
+        logger.warning("Priority must be low, normal or high.")
 
 
 # main() accepts a repository as an argument (it creates a default one).
@@ -18,7 +39,10 @@ def main(tasks=None):
     print("Task Manager CLI (class-based)")
 
     while True:
-        print("\n1. Add task\n2. List tasks\n3. Delete task\n4. Update task\n5. Exit")
+        print(
+            "\n1. Add task\n2. List tasks\n3. Delete task\n4. Update task"
+            "\n5. Mark task done\n6. Stats\n7. Exit"
+        )
         choice = input("Choose: ")
 
         if choice == "1":
@@ -27,7 +51,14 @@ def main(tasks=None):
                 logger.warning("Task title cannot be empty.")
                 continue
             description = input("Description (optional): ")
-            task = tasks.create_task(Task(title, description or None))
+            done = _ask_done("Done (0/1) [0]: ", default=0) == 1
+            priority = _ask_priority(
+                "Priority (low/normal/high) [normal]: ",
+                "normal",
+            )
+            task = tasks.create_task(
+                Task(title, description or None, done=done, priority=priority)
+            )
             logger.info("Task added. ID: %s", task.id)
         elif choice == "2":
             all_tasks = tasks.get_all_tasks()
@@ -57,20 +88,37 @@ def main(tasks=None):
                 continue
             title = input("New Title (leave blank to keep current): ")
             description = input("New Description (leave blank to keep current): ")
-            while True:
-                done_raw = input("Mark as done? 0/1 (leave blank to keep current): ")
-                if done_raw == "":
-                    done = None
-                    break
-                if done_raw in ("0", "1"):
-                    done = done_raw == "1"
-                    break
-                logger.warning("Enter 0 or 1.")
-            if tasks.update_task(task_id, title or None, description or None, done):
+            priority = _ask_priority(
+                "New Priority (low/normal/high, blank to keep current): "
+            )
+            done_value = _ask_done("Mark as done? 0/1 (leave blank to keep current): ")
+            done = None if done_value is None else done_value == 1
+            if tasks.update_task(
+                task_id,
+                title or None,
+                description or None,
+                done,
+                priority,
+            ):
                 logger.info("Task updated.")
             else:
                 logger.warning("Task not found.")
         elif choice == "5":
+            try:
+                task_id = int(input("Task ID: "))
+            except ValueError:
+                logger.warning("ID must be a number.")
+                continue
+            if tasks.update_task(task_id, done=True):
+                logger.info("Task marked as done.")
+            else:
+                logger.warning("Task not found.")
+        elif choice == "6":
+            stats = tasks.get_stats()
+            print(f"Total: {stats['total']}")
+            print(f"Completed: {stats['completed']}")
+            print(f"Pending: {stats['pending']}")
+        elif choice == "7":
             break
         else:
             logger.warning("Invalid option")

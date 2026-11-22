@@ -3,29 +3,49 @@
     "id": 1,
     "title": "Przejrzeć plan nauki GH-300",
     "description": "Przeczytać plik z katalogu schedules i wybrać pierwszy moduł.",
-    "done": 0
+    "done": 1,
+    "priority": "normal"
   },
   {
     "id": 2,
     "title": "Dodać testy do crud.py",
     "description": "Pokryć create_task, update_task i delete_task.",
-    "done": 0
+    "done": 0,
+    "priority": "normal"
   },
   {
     "id": 3,
     "title": "Zrobić zakupy",
     "description": "Chleb, mleko, jajka, kawa.",
-    "done": 1
+    "done": 1,
+    "priority": "normal"
   },
   {
     "id": 4,
     "title": "Uzupełnić README",
     "description": null,
-    "done": 0
+    "done": 0,
+    "priority": "normal"
   },
   {
     "id": 6,
     "title": "Testowy task po zmianie",
-    "description": "Testowy opis taska po zmianie"
+    "description": "Testowy opis taska po zmianie",
+    "done": 0,
+    "priority": "normal"
+  },
+  {
+    "id": 7,
+    "title": "Task after code changes",
+    "description": "task after code changes desc",
+    "done": 1,
+    "priority": "normal"
+  },
+  {
+    "id": 8,
+    "title": "Commit some changes",
+    "description": null,
+    "done": 0,
+    "priority": "normal"
   }
 ]

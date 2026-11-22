@@ -20,8 +20,14 @@ def init_db(db_path=None):
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             description TEXT,
-            done INTEGER DEFAULT 0
+            done INTEGER DEFAULT 0,
+            priority TEXT NOT NULL DEFAULT 'normal'
         )
     """)
+    columns = conn.execute("PRAGMA table_info(tasks)").fetchall()
+    if not any(column["name"] == "priority" for column in columns):
+        conn.execute(
+            "ALTER TABLE tasks ADD COLUMN priority TEXT NOT NULL DEFAULT 'normal'"
+        )
     conn.commit()
     conn.close()
