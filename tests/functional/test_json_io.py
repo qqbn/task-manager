@@ -397,3 +397,39 @@ def test_json_invalid_priority_is_rejected():
 
     with pytest.raises(ValueError):
         update_task(1, priority="urgent")
+
+
+def test_task_field_length_limits():
+    save_all_tasks([])
+
+    assert update_task(999, title="A" * 200, description="B" * 300) is False
+
+    save_all_tasks(
+        [
+            {
+                "id": 1,
+                "title": "A" * 200,
+                "description": "B" * 300,
+                "done": 0,
+                "priority": "normal",
+            }
+        ]
+    )
+    assert get_task(1)["title"] == "A" * 200
+    assert get_task(1)["description"] == "B" * 300
+
+    with pytest.raises(ValueError, match="200 characters"):
+        update_task(1, title="A" * 201)
+    with pytest.raises(ValueError, match="300 characters"):
+        update_task(1, description="B" * 301)
+
+
+def test_menu_rejects_overlong_title(monkeypatch, caplog):
+    save_all_tasks([])
+    answers = iter(["1", "A" * 201, "7"])
+    monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
+
+    json_io.main()
+
+    assert get_all_tasks() == []
+    assert "Task title cannot be longer than 200 characters" in caplog.text

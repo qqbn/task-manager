@@ -100,3 +100,23 @@ def test_delete_task(db_path):
     assert deleted is True
     assert get_task(task_id, db_path) is None
     assert not any(task["id"] == task_id for task in get_all_tasks(db_path))
+
+
+def test_task_field_length_limits(db_path):
+    title = "A" * 200
+    description = "B" * 300
+    task_id = create_task(title, description, db_path=db_path)
+
+    task = get_task(task_id, db_path)
+    assert task["title"] == title
+    assert task["description"] == description
+
+    with pytest.raises(ValueError, match="200 characters"):
+        create_task("A" * 201, db_path=db_path)
+    with pytest.raises(ValueError, match="300 characters"):
+        create_task("Valid", "B" * 301, db_path=db_path)
+
+    with pytest.raises(ValueError, match="200 characters"):
+        update_task(task_id, title="A" * 201, db_path=db_path)
+    with pytest.raises(ValueError, match="300 characters"):
+        update_task(task_id, description="B" * 301, db_path=db_path)

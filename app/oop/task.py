@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from app.validation import validate_description, validate_title
+
 
 # Reminder: @dataclass generates __init__, __repr__ and __eq__ for us.
 # Without it, the same class would look like this:
@@ -33,7 +35,7 @@ class Task:
     priority: str = "normal"
 
     def __post_init__(self):
-        if not self.title.strip():
-            raise ValueError("Task title cannot be empty")
+        validate_title(self.title)
+        validate_description(self.description)
         if self.priority not in ("low", "normal", "high"):
             raise ValueError("Priority must be low, normal or high")

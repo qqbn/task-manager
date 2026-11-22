@@ -95,3 +95,12 @@ def test_cli_priority_done_filter_and_stats(repository, caplog, capsys):
     assert "Completed: 1" in output
     assert "Pending: 1" in output
     assert "Task marked as done." in caplog.text
+
+
+def test_cli_rejects_overlong_title_and_description(repository):
+    from app.cli import main
+
+    with pytest.raises(SystemExit):
+        main(["add", "A" * 201], repository)
+    with pytest.raises(SystemExit):
+        main(["add", "Valid", "--description", "B" * 301], repository)

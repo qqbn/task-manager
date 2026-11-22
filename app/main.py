@@ -8,6 +8,7 @@ from app.functional.crud import (
     get_task,
     update_task,
 )
+from app.validation import validate_description, validate_title
 
 logger = logging.getLogger(__name__)
 
@@ -44,10 +45,17 @@ def main():
 
         if choice == "1":
             title = input("Title: ")
-            if not title.strip():
-                logger.warning("Task title cannot be empty.")
+            try:
+                validate_title(title)
+            except ValueError as error:
+                logger.warning("%s", error)
                 continue
             description = input("Description (optional): ")
+            try:
+                validate_description(description or None)
+            except ValueError as error:
+                logger.warning("%s", error)
+                continue
             done = _ask_done("Done (0/1) [0]: ", default=0)
             priority = _ask_priority(
                 "Priority (low/normal/high) [normal]: ",
@@ -87,13 +95,18 @@ def main():
             priority = _ask_priority(
                 "New Priority (low/normal/high, leave blank to keep current): "
             )
-            if update_task(
-                task_id,
-                title or None,
-                description or None,
-                done,
-                priority,
-            ):
+            try:
+                updated = update_task(
+                    task_id,
+                    title or None,
+                    description or None,
+                    done,
+                    priority,
+                )
+            except ValueError as error:
+                logger.warning("%s", error)
+                continue
+            if updated:
                 logger.info("Task updated.")
             else:
                 logger.warning("Task not found.")

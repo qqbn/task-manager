@@ -1,11 +1,12 @@
 from app.database import get_connection
+from app.validation import validate_description, validate_title
 
 VALID_PRIORITIES = ("low", "normal", "high")
 
 
 def create_task(title, description=None, priority="normal", db_path=None, done=0):
-    if not title.strip():
-        raise ValueError("Task title cannot be empty")
+    validate_title(title)
+    validate_description(description)
     if priority not in VALID_PRIORITIES:
         raise ValueError("Priority must be low, normal or high")
     conn = get_connection(db_path)
@@ -64,6 +65,9 @@ def update_task(
     priority=None,
     db_path=None,
 ):
+    if title is not None:
+        validate_title(title)
+    validate_description(description)
     if priority is not None and priority not in VALID_PRIORITIES:
         raise ValueError("Priority must be low, normal or high")
     conn = get_connection(db_path)

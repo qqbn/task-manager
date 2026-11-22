@@ -74,3 +74,16 @@ def test_class_menu_can_add_completed_task(repository, monkeypatch):
     main(repository)
 
     assert repository.get_all_tasks() == [Task("Completed task", done=True, id=1)]
+
+
+def test_class_menu_rejects_overlong_description(repository, monkeypatch, caplog):
+    answers = iter(["1", "Valid", "B" * 301, "0", "normal", "7"])
+    monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
+
+    from app.class_main import main
+
+    caplog.set_level("INFO", logger="app.class_main")
+    main(repository)
+
+    assert repository.get_all_tasks() == []
+    assert "Task description cannot be longer than 300 characters" in caplog.text

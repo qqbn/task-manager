@@ -4,13 +4,24 @@ import logging
 from app.database import init_db
 from app.oop.task import Task
 from app.oop.task_repository import TaskRepository
+from app.validation import validate_description, validate_title
 
 logger = logging.getLogger(__name__)
 
 
 def _non_empty(value):
-    if not value.strip():
-        raise argparse.ArgumentTypeError("value cannot be empty")
+    try:
+        validate_title(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error)) from error
+    return value
+
+
+def _description(value):
+    try:
+        validate_description(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error)) from error
     return value
 
 
@@ -26,7 +37,7 @@ def create_parser():
 
     add_command = commands.add_parser("add", help="Add a task")
     add_command.add_argument("title", type=_non_empty)
-    add_command.add_argument("--description")
+    add_command.add_argument("--description", type=_description)
     add_command.add_argument("--priority", type=_priority, default="normal")
     add_command.add_argument("--done", choices=("0", "1"), default="0")
 
@@ -36,7 +47,7 @@ def create_parser():
     update_command = commands.add_parser("update", help="Update a task")
     update_command.add_argument("task_id", type=int)
     update_command.add_argument("--title", type=_non_empty)
-    update_command.add_argument("--description")
+    update_command.add_argument("--description", type=_description)
     update_command.add_argument("--done", choices=("0", "1"))
     update_command.add_argument("--priority", type=_priority)
 
